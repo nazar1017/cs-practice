@@ -10,6 +10,55 @@ def csv_to_records(text: str) -> list[dict]:
     return [dict(zip(header, line.split(","))) for line in lines[1:]]
 
 
+def _convert(value: str):
+    value = value.strip()
+    low = value.lower()
+    if low in ("true", "yes"):
+        return True
+    if low in ("false", "no"):
+        return False
+    try:
+        return int(value)
+    except ValueError:
+        pass
+    try:
+        return float(value)
+    except ValueError:
+        return value
+
+
+def parse_settings(lines: list[str]) -> dict:
+    """Учебный YAML: «ключ: значение», списки через «- », комментарии после #."""
+    result = {}
+    current_list = None
+    for raw in lines:
+        line = raw.split("#", 1)[0].rstrip()
+        if not line.strip():
+            continue
+        stripped = line.strip()
+        if stripped.startswith("- ") or stripped == "-":
+            if current_list is not None:
+                current_list.append(_convert(stripped[1:]))
+            continue
+        key, _, value = stripped.partition(":")
+        key = key.strip()
+        if value.strip() == "":
+            current_list = []
+            result[key] = current_list
+        else:
+            current_list = None
+            result[key] = _convert(value)
+    return result
+
+
+def merge_by_key(rows: list[dict], extra: dict, key: str = "id") -> list[dict]:
+    """Дополняет записи сведениями из справочника; поля записи важнее."""
+    merged = []
+    for row in rows:
+        merged.append({**extra.get(row.get(key), {}), **row})
+    return merged
+
+
 def records_to_json(records: list[dict]) -> str:
     """Список словарей -> JSON: отступ 2, ключи по алфавиту, кириллица как есть."""
     return json.dumps(records, ensure_ascii=False, indent=2, sort_keys=True)

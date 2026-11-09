@@ -15,3 +15,10 @@ b = float(input("Второе число: "))
 print("Сумма:", add(a, b))
 print("Разность:", subtract(a, b))
 print("Произведение:", multiply(a, b))
+
+
+def divide(a, b):
+    return a / b
+
+
+print("Частное:", divide(a, b))

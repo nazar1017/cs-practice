@@ -22,7 +22,7 @@ def _convert(value: str):
     except ValueError:
         pass
     try:
-        return float(value.replace(",", "."))
+        return float(value)
     except ValueError:
         return value
 
@@ -38,7 +38,7 @@ def parse_settings(lines: list[str]) -> dict:
         stripped = line.strip()
         if stripped.startswith("- ") or stripped == "-":
             if current_list is not None:
-                current_list.append(_convert(stripped[1:]))
+                current_list.append(stripped[1:].strip())
             continue
         key, _, value = stripped.partition(":")
         key = key.strip()

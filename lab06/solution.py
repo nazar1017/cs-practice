@@ -2,7 +2,7 @@ def count_by_extension(paths: list[str]) -> dict[str, int]:
     """Сколько файлов каждого расширения (в нижнем регистре, без точки)."""
     result = {}
     for path in paths:
-        name = path.split("/")[-1]
+        name = path.split("/")[-1].lstrip(".")  # скрытый файл .gitignore без расширения
         ext = name.rsplit(".", 1)[1].lower() if "." in name else ""
         result[ext] = result.get(ext, 0) + 1
     return result

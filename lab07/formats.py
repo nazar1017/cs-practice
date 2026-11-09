@@ -6,8 +6,8 @@ def csv_to_records(text: str) -> list[dict]:
     lines = [line for line in text.splitlines() if line.strip()]
     if not lines:
         return []
-    header = lines[0].split(",")
-    return [dict(zip(header, line.split(","))) for line in lines[1:]]
+    header = [h.strip() for h in lines[0].split(",")]
+    return [dict(zip(header, (v.strip() for v in line.split(",")))) for line in lines[1:]]
 
 
 def _convert(value: str):
@@ -22,7 +22,7 @@ def _convert(value: str):
     except ValueError:
         pass
     try:
-        return float(value)
+        return float(value.replace(",", "."))
     except ValueError:
         return value
 

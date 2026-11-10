@@ -22,7 +22,7 @@ def _convert(value: str):
     except ValueError:
         pass
     try:
-        return float(value)
+        return float(value.replace(",", "."))
     except ValueError:
         return value
 
